@@ -12,7 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table(name = "cuentas")
@@ -22,22 +21,21 @@ public class Cuenta {
     private Long id;
     
     @Column(name = "numero_cuenta", nullable = false, unique = true)
-    @NotBlank(message = "El número de cuenta es obligatorio")
     private String numeroCuenta;
 
+    @Column(nullable = false)
     @NotBlank(message = "El nombre del titular es obligatorio")
     private String titular;
 
-    @Column(name = "tipo_cuenta")
+    @Column(name = "tipo_cuenta", nullable = false)
     @NotBlank(message = "El tipo de cuenta es obligatorio")
     private TipoCuenta tipoCuenta;
 
-    @PositiveOrZero
     private BigDecimal saldo;
 
     private Boolean activa = true;
 
-    @Column(name = "fecha_creacion")
+    @Column(name = "fecha_creacion", updatable = false)
     @CreationTimestamp
     private LocalDateTime fechaCreacion;
 
