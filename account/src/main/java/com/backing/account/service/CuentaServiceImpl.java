@@ -13,6 +13,7 @@ import com.backing.account.entity.Cuenta;
 import com.backing.account.exception.CuentaInactivaException;
 import com.backing.account.exception.CuentaNotFoundException;
 import com.backing.account.exception.MontoInvalidoException;
+import com.backing.account.exception.NumeroCuentaDuplicadoException;
 import com.backing.account.exception.SaldoInsuficienteException;
 import com.backing.account.repository.CuentaRepository;
 
@@ -37,7 +38,7 @@ public class CuentaServiceImpl implements CuentaService {
     @Override
     @Transactional(readOnly = true)
     public Cuenta findById(Long id) {
-        return cuentaRepository.findById(id).orElseThrow(() -> new CuentaNotFoundException());
+        return cuentaRepository.findById(id).orElseThrow(() -> new CuentaNotFoundException(id));
     }
 
     @Override
@@ -49,7 +50,7 @@ public class CuentaServiceImpl implements CuentaService {
     @Override
     @Transactional(readOnly = true)
     public Cuenta findByNumeroCuenta(String numeroCuenta) {
-        return cuentaRepository.findByNumeroCuenta(numeroCuenta).orElseThrow(() -> new CuentaNotFoundException());
+        return cuentaRepository.findByNumeroCuenta(numeroCuenta).orElseThrow(() -> new NumeroCuentaDuplicadoException(numeroCuenta));
     }
 
     @Override
