@@ -1,10 +1,10 @@
 package com.backing.account.service;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import com.backing.account.dto.CuentaRequest;
 import com.backing.account.dto.CuentaResponse;
+import com.backing.account.dto.MontoRequest;
 import com.backing.account.entity.Cuenta;
 
 public interface CuentaService {
@@ -22,8 +22,8 @@ public interface CuentaService {
 
     void eliminar(Long id);
 
-    CuentaResponse depositar(Long id, BigDecimal monto);
+    CuentaResponse depositar(Long id, MontoRequest montoRequest);
 
-    CuentaResponse retirar(Long id, BigDecimal monto);
+    CuentaResponse retirar(Long id, MontoRequest montoRequest);
 
 }
