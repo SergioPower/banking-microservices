@@ -3,23 +3,26 @@ package com.backing.account.dto;
 import java.math.BigDecimal;
 
 import com.backing.account.entity.TipoCuenta;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 
-public class CuentaRequest {
-    
-    @NotBlank
-    String numeroCuenta;
+public record CuentaRequest(
+    @NotBlank String numeroCuenta,
 
     @NotBlank
-    String titular;
-    
+    String titular,
+
     @NotBlank
-    TipoCuenta tipoCuenta;
+    TipoCuenta tipoCuenta,
 
     @NotBlank
     @PositiveOrZero
-    BigDecimal saldoInicial;
+    BigDecimal saldoInicial
+) {
+    @JsonCreator 
+    public CuentaRequest{
 
+    }
 }
