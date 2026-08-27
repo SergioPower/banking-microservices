@@ -1,0 +1,10 @@
+package com.backing.account.exception;
+
+public class MontoInvalidoException extends RuntimeException{
+
+    public MontoInvalidoException() {
+        super("El monto debe ser mayor a 0");
+    }
+    
+
+}
