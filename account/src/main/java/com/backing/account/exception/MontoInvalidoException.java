@@ -3,7 +3,7 @@ package com.backing.account.exception;
 public class MontoInvalidoException extends RuntimeException{
 
     public MontoInvalidoException() {
-        super("El monto debe ser mayor a 0");
+        super("El monto debe ser mayor que 0");
     }
     
 
