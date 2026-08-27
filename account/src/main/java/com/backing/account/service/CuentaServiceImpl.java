@@ -38,7 +38,8 @@ public class CuentaServiceImpl implements CuentaService {
     @Override
     @Transactional(readOnly = true)
     public Cuenta findById(Long id) {
-        return cuentaRepository.findById(id).orElseThrow(() -> new CuentaNotFoundException(id));
+        return cuentaRepository.findById(id)
+                .orElseThrow(() -> new CuentaNotFoundException("La cuenta con id: " + id + "no fue encontrada"));
     }
 
     @Override
@@ -50,12 +51,17 @@ public class CuentaServiceImpl implements CuentaService {
     @Override
     @Transactional(readOnly = true)
     public Cuenta findByNumeroCuenta(String numeroCuenta) {
-        return cuentaRepository.findByNumeroCuenta(numeroCuenta).orElseThrow(() -> new NumeroCuentaDuplicadoException(numeroCuenta));
+        return cuentaRepository.findByNumeroCuenta(numeroCuenta)
+                .orElseThrow(() -> new CuentaNotFoundException("No se encontró la cuenta con número: " + numeroCuenta));
     }
 
     @Override
     @Transactional
     public CuentaResponse crear(CuentaRequest request) {
+        if (cuentaRepository.existsByNumeroCuenta(request.numeroCuenta())) {
+            throw new NumeroCuentaDuplicadoException(request.numeroCuenta());
+        }
+
         Cuenta nuevaCuenta = toEntity(request);
         Cuenta cuentaGuardada = cuentaRepository.save(nuevaCuenta);
         return toResponse(cuentaGuardada);
@@ -66,6 +72,11 @@ public class CuentaServiceImpl implements CuentaService {
     @Transactional
     public CuentaResponse actualizar(Long id, CuentaRequest request) {
         Cuenta cuentaActualizada = findById(id);
+        if (!cuentaActualizada.getNumeroCuenta().equals(request.numeroCuenta()) &&
+                cuentaRepository.existsByNumeroCuenta(request.numeroCuenta())) {
+            throw new NumeroCuentaDuplicadoException(request.numeroCuenta());
+        }
+
         cuentaActualizada.setNumeroCuenta(request.numeroCuenta());
         cuentaActualizada.setTitular(request.titular());
         cuentaActualizada.setTipoCuenta(request.tipoCuenta());
@@ -84,11 +95,11 @@ public class CuentaServiceImpl implements CuentaService {
     public CuentaResponse depositar(Long id, MontoRequest montoRequest) {
         Cuenta cuentaDepositar = findById(id);
         BigDecimal monto = montoRequest.monto();
-        
-        if (!cuentaDepositar.getActiva())
-            new CuentaInactivaException(cuentaDepositar.getNumeroCuenta());
+        if (cuentaRepository.existsByNumeroCuenta(cuentaDepositar.getNumeroCuenta()) && 
+            !cuentaDepositar.getActiva())
+            throw new CuentaInactivaException(cuentaDepositar.getNumeroCuenta());
         if (monto.compareTo(BigDecimal.ZERO) <= 0)
-            new MontoInvalidoException();
+            throw new MontoInvalidoException();
 
         cuentaDepositar.setSaldo(cuentaDepositar.getSaldo().add(monto));
         cuentaRepository.save(cuentaDepositar);
@@ -100,12 +111,12 @@ public class CuentaServiceImpl implements CuentaService {
         Cuenta cuentaRetirar = findById(id);
         BigDecimal monto = montoRequest.monto();
 
-        if (!cuentaRetirar.getActiva())
-            new CuentaInactivaException(cuentaRetirar.getNumeroCuenta());
+        if (cuentaRepository.existsByNumeroCuenta(cuentaRetirar.getNumeroCuenta()) && !cuentaRetirar.getActiva())
+            throw new CuentaInactivaException(cuentaRetirar.getNumeroCuenta());
         if (monto.compareTo(BigDecimal.ZERO) <= 0)
-            new MontoInvalidoException();
+            throw new MontoInvalidoException();
         if (cuentaRetirar.getSaldo().compareTo(monto) == -1)
-            new SaldoInsuficienteException(cuentaRetirar.getSaldo());
+            throw new SaldoInsuficienteException(cuentaRetirar.getSaldo());
 
         cuentaRetirar.setSaldo(cuentaRetirar.getSaldo().subtract(monto));
         cuentaRepository.save(cuentaRetirar);
