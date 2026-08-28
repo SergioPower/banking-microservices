@@ -11,11 +11,13 @@ import com.banking.transfer.dto.TransferenciaRequest;
 import com.banking.transfer.dto.TransferenciaResponse;
 import com.banking.transfer.entity.EstadoTransferencia;
 import com.banking.transfer.entity.Transferencia;
+import com.banking.transfer.exception.CuentaOrigenDesnitoIgualException;
+import com.banking.transfer.exception.TransferenciaFallidaException;
 import com.banking.transfer.exception.TransferenciaNotFoundException;
 import com.banking.transfer.repository.TransferenciaRepository;
 
 @Service
-public class TransferenciaServiceImpl implements TransferenciaService{
+public class TransferenciaServiceImpl implements TransferenciaService {
 
     private final TransferenciaRepository repository;
 
@@ -28,45 +30,55 @@ public class TransferenciaServiceImpl implements TransferenciaService{
 
     @Override
     public TransferenciaResponse crearTransferencia(TransferenciaRequest request) {
+        EstadoTransferencia estado;
         // 1. validar cuenta origen != destino
         if (request.cuentaOrigenId().equals(request.cuentaDestinoId())) {
-            throw new RuntimeException();
+            throw new CuentaOrigenDesnitoIgualException();
         }
 
-        /* 2. consultar cuenta origen
-                ↓
-        account-service */
+        /*
+         * 2. consultar cuenta origen
+         * ↓
+         * account-service
+         */
         CuentaResponse cuentaOrigen = cuentaClient.obtenerCuenta(request.cuentaOrigenId());
 
-        /* 3. consultar cuenta destino
-            ↓
-        account-service */
+        /*
+         * 3. consultar cuenta destino
+         * ↓
+         * account-service
+         */
         CuentaResponse cuentaDestino = cuentaClient.obtenerCuenta(request.cuentaDestinoId());
 
-        // 4. validar saldo
         BigDecimal monto = request.monto();
-        if (cuentaOrigen.saldo().compareTo(monto) == -1 ) {
-            throw new RuntimeException();
+        try {
+            // 4. validar saldo
+            if (cuentaOrigen.saldo().compareTo(monto) == -1) {
+                throw new Exception("Saldo insuficiente");
+            }
+
+            // 5. retirar dinero de origen
+            cuentaClient.retirar(cuentaOrigen.id(), monto);
+
+            // 6. depositar dinero en destino
+            cuentaClient.depositar(cuentaDestino.id(), monto);
+
+            estado = EstadoTransferencia.COMPLETADA;
+        } catch (Exception e) {
+            estado = EstadoTransferencia.FALLIDA;
+            throw new TransferenciaFallidaException(e.getMessage());
         }
 
-        // 5. retirar dinero de origen
-        cuentaClient.retirar(cuentaOrigen.id(), monto);
-
-        // 6. depositar dinero en destino
-        cuentaClient.depositar(cuentaDestino.id(), monto);
-
-        //7. guardar transferencia como COMPLETADA
+        // 7. guardar transferencia como COMPLETADA
         Transferencia transferencia = new Transferencia();
         transferencia.setCuentaOrigenId(cuentaOrigen.id());
         transferencia.setCuentaDestinoId(cuentaDestino.id());
         transferencia.setMonto(monto);
-        transferencia.setEstado(EstadoTransferencia.COMPLETADA);
+        transferencia.setEstado(estado);
         repository.save(transferencia);
 
         return toResponse(transferencia);
     }
-
-    
 
     @Override
     public List<TransferenciaResponse> findAll() {
@@ -78,7 +90,7 @@ public class TransferenciaServiceImpl implements TransferenciaService{
 
     @Override
     public Transferencia findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new TransferenciaNotFoundException());
+        return repository.findById(id).orElseThrow(() -> new TransferenciaNotFoundException(id));
     }
 
     @Override
@@ -88,16 +100,14 @@ public class TransferenciaServiceImpl implements TransferenciaService{
 
     @Override
     public TransferenciaResponse toResponse(Transferencia transferencia) {
-            return new TransferenciaResponse(
+        return new TransferenciaResponse(
                 transferencia.getId(),
                 transferencia.getCuentaOrigenId(),
                 transferencia.getCuentaDestinoId(),
                 transferencia.getMonto(),
                 transferencia.getEstado(),
                 transferencia.getFechaCreacion(),
-                transferencia.getReferencia()
-            );
+                transferencia.getReferencia());
     }
-
 
 }
