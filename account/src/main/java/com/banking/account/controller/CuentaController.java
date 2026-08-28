@@ -1,12 +1,12 @@
-package com.backing.account.controller;
+package com.banking.account.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backing.account.dto.CuentaRequest;
-import com.backing.account.dto.CuentaResponse;
-import com.backing.account.dto.MontoRequest;
-import com.backing.account.service.CuentaService;
+import com.banking.account.dto.CuentaRequest;
+import com.banking.account.dto.CuentaResponse;
+import com.banking.account.dto.MontoRequest;
+import com.banking.account.service.CuentaService;
 
 import jakarta.validation.Valid;
 

@@ -1,4 +1,4 @@
-package com.backing.account.entity;
+package com.banking.account.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

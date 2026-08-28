@@ -1,4 +1,4 @@
-package com.backing.account.exception;
+package com.banking.account.exception;
 
 public class CuentaInactivaException extends RuntimeException {
 

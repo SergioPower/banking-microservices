@@ -1,8 +1,8 @@
-package com.backing.account.dto;
+package com.banking.account.dto;
 
 import java.math.BigDecimal;
 
-import com.backing.account.entity.TipoCuenta;
+import com.banking.account.entity.TipoCuenta;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import jakarta.validation.constraints.NotBlank;

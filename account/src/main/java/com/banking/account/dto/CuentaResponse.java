@@ -1,9 +1,9 @@
-package com.backing.account.dto;
+package com.banking.account.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.backing.account.entity.TipoCuenta;
+import com.banking.account.entity.TipoCuenta;
 
 public record CuentaResponse (
     Long id,

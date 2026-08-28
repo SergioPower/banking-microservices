@@ -1,4 +1,4 @@
-package com.backing.account.entity;
+package com.banking.account.entity;
 
 public enum TipoCuenta {
     AHORRO,

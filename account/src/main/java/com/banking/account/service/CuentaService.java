@@ -1,11 +1,11 @@
-package com.backing.account.service;
+package com.banking.account.service;
 
 import java.util.List;
 
-import com.backing.account.dto.CuentaRequest;
-import com.backing.account.dto.CuentaResponse;
-import com.backing.account.dto.MontoRequest;
-import com.backing.account.entity.Cuenta;
+import com.banking.account.dto.CuentaRequest;
+import com.banking.account.dto.CuentaResponse;
+import com.banking.account.dto.MontoRequest;
+import com.banking.account.entity.Cuenta;
 
 public interface CuentaService {
     List<CuentaResponse> findAll();

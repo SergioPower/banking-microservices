@@ -1,10 +1,10 @@
-package com.backing.account.repository;
+package com.banking.account.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.backing.account.entity.Cuenta;
+import com.banking.account.entity.Cuenta;
 
 public interface CuentaRepository extends JpaRepository<Cuenta, Long> {
     

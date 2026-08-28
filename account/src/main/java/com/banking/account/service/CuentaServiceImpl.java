@@ -1,4 +1,4 @@
-package com.backing.account.service;
+package com.banking.account.service;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -6,16 +6,16 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.backing.account.dto.CuentaRequest;
-import com.backing.account.dto.CuentaResponse;
-import com.backing.account.dto.MontoRequest;
-import com.backing.account.entity.Cuenta;
-import com.backing.account.exception.CuentaInactivaException;
-import com.backing.account.exception.CuentaNotFoundException;
-import com.backing.account.exception.MontoInvalidoException;
-import com.backing.account.exception.NumeroCuentaDuplicadoException;
-import com.backing.account.exception.SaldoInsuficienteException;
-import com.backing.account.repository.CuentaRepository;
+import com.banking.account.dto.CuentaRequest;
+import com.banking.account.dto.CuentaResponse;
+import com.banking.account.dto.MontoRequest;
+import com.banking.account.entity.Cuenta;
+import com.banking.account.exception.CuentaInactivaException;
+import com.banking.account.exception.CuentaNotFoundException;
+import com.banking.account.exception.MontoInvalidoException;
+import com.banking.account.exception.NumeroCuentaDuplicadoException;
+import com.banking.account.exception.SaldoInsuficienteException;
+import com.banking.account.repository.CuentaRepository;
 
 @Service
 public class CuentaServiceImpl implements CuentaService {
