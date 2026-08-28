@@ -17,7 +17,7 @@ public class CuentaClient {
         this.restClient = restClient;
     }
 
-    public CuentaResponse obtenerCUenta(Long id){
+    public CuentaResponse obtenerCuenta(Long id){
         return restClient.get()
             .uri("/api/cuentas/{id}", id)
             .retrieve()
