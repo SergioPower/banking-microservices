@@ -11,14 +11,12 @@ services:
       POSTGRES_DB: account_db
       POSTGRES_USER: account_user
       POSTGRES_PASSWORD: account_pass_123
-      # Configuración adicional para mejor rendimiento
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8"
     ports:
-      - "5433:5433"
+      - "5433:5432"  # Puerto expuesto: 5433
     volumes:
       - account_db_data:/var/lib/postgresql/data
-      # Si tienes un script de inicialización, descomenta esta línea
-      # - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./account-service/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
       - banking-network
     healthcheck:
@@ -27,7 +25,6 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
-    # Configuración de recursos (opcional)
     deploy:
       resources:
         limits:
@@ -35,11 +32,126 @@ services:
         reservations:
           memory: 256M
 
+  # ============================================
+  # Base de datos para Transfer Service
+  # ============================================
+  transfer-db:
+    image: postgres:15-alpine
+    container_name: transfer-db
+    environment:
+      POSTGRES_DB: transfer_db
+      POSTGRES_USER: transfer_user
+      POSTGRES_PASSWORD: transfer_pass_123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8"
+    ports:
+      - "5434:5432"  # Puerto expuesto: 5434
+    volumes:
+      - transfer_db_data:/var/lib/postgresql/data
+      - ./transfer-service/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - banking-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U transfer_user -d transfer_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # ============================================
+  # Account Service
+  # ============================================
+  account-service:
+    build:
+      context: ./account-service
+      dockerfile: Dockerfile
+    container_name: account-service
+    ports:
+      - "8081:8080"  # Puerto expuesto: 8081
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      # Configuración de base de datos
+      SPRING_DATASOURCE_URL: jdbc:postgresql://account-db:5432/account_db
+      SPRING_DATASOURCE_USERNAME: account_user
+      SPRING_DATASOURCE_PASSWORD: account_pass_123
+      # Configuración de JPA
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "true"
+      # Configuración del servidor
+      SERVER_PORT: 8080
+      SERVER_SERVLET_CONTEXT_PATH: /api/accounts
+      # Configuración de logging
+      LOGGING_LEVEL_COM_BANKING: DEBUG
+      # URL del Transfer Service
+      TRANSFER_SERVICE_URL: http://transfer-service:8080
+    depends_on:
+      account-db:
+        condition: service_healthy
+    networks:
+      - banking-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ============================================
+  # Transfer Service
+  # ============================================
+  transfer-service:
+    build:
+      context: ./transfer-service
+      dockerfile: Dockerfile
+    container_name: transfer-service
+    ports:
+      - "8082:8080"  # Puerto expuesto: 8082
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      # Configuración de base de datos
+      SPRING_DATASOURCE_URL: jdbc:postgresql://transfer-db:5432/transfer_db
+      SPRING_DATASOURCE_USERNAME: transfer_user
+      SPRING_DATASOURCE_PASSWORD: transfer_pass_123
+      # Configuración de JPA
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "true"
+      # Configuración del servidor
+      SERVER_PORT: 8080
+      SERVER_SERVLET_CONTEXT_PATH: /api/transfers
+      # Configuración de logging
+      LOGGING_LEVEL_COM_BANKING: DEBUG
+      # URL del Account Service
+      ACCOUNT_SERVICE_URL: http://account-service:8080
+    depends_on:
+      transfer-db:
+        condition: service_healthy
+    networks:
+      - banking-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
 # ============================================
 # Volúmenes persistentes
 # ============================================
 volumes:
   account_db_data:
+    driver: local
+  transfer_db_data:
     driver: local
 
 # ============================================
