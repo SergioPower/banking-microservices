@@ -1,14 +1,19 @@
 package com.banking.transfer.config;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 
 @Configuration
 public class RestClientConfig {
 
-    public RestClient restClient() {
+    @Bean
+    public RestClient restClient(
+            @Value("${account-service.url}") String accountServiceUrl) {
+
         return RestClient.builder()
-            .baseUrl("http://localhost8081")
-            .build();
+                .baseUrl(accountServiceUrl)
+                .build();
     }
 }
