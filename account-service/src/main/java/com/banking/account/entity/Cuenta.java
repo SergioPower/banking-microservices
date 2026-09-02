@@ -46,6 +46,14 @@ public class Cuenta {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
     public String getNumeroCuenta() {
         return numeroCuenta;
     }
