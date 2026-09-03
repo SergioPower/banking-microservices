@@ -13,8 +13,10 @@ public class CuentaClient {
     
     private final RestClient restClient;
 
-    public CuentaClient(RestClient restClient){
-        this.restClient = restClient;
+    public CuentaClient(RestClient.Builder builder) {
+        this.restClient = builder
+                .baseUrl("http://ACCOUNT-SERVICE")
+                .build();
     }
 
     public CuentaResponse obtenerCuenta(Long id){
