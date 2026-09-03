@@ -12,8 +12,7 @@
 	<groupId>com.banking</groupId>
 	<artifactId>eureka</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>eureka</name>
-	<description>Eureka Server for Banking Microservices<description/> 
+	<name>eureka</name> 
 	<url/>
 	<licenses>
 		<license/>
