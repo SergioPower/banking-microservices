@@ -13,7 +13,7 @@
 	<artifactId>eureka</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>eureka</name>
-	<description/>
+	<description>Eureka Server for Banking Microservices<description/> 
 	<url/>
 	<licenses>
 		<license/>
