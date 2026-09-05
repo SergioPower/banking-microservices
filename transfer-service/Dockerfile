@@ -1,4 +1,4 @@
-FROM amazoncorretto:21-alpine
+FROM amazoncorretto:17-alpine
 
 # Etiquetas para identificación
 LABEL maintainer="banking-platform"
