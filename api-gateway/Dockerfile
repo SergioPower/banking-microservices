@@ -1,4 +1,4 @@
-FROM amazoncorretto:21-alpine
+FROM amazoncorretto:17-alpine
 
 LABEL maintainer="banking-platform"
 LABEL description="API Gateway for Banking Microservices"
