@@ -27,9 +27,9 @@ build_service() {
 }
 
 build_service "eureka-server"
-build_service "api-gateway"
 build_service "account-service"
 build_service "transfer-service"
+build_service "api-gateway"
 
 # ============================================
 # 2. VERIFICACIÓN DE JARS
@@ -51,9 +51,9 @@ check_jar() {
 }
 
 check_jar "eureka-server"
-check_jar "api-gateway"
 check_jar "account-service"
 check_jar "transfer-service"
+check_jar "api-gateway"
 
 # ============================================
 # 3. LEVANTAR SERVICIOS CON DOCKER (SILENCIOSO)

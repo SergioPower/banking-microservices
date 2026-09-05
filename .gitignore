@@ -1,5 +1,6 @@
 transfer/src/main/resources/META-INF/additional-spring-configuration-metadata.json
 .vscode/
-solucion.sh
-build-all.sh
-verificacion.sh
+*.shaccount-service/src/main/resources/application.yml
+eureka-server/src/main/resources/application.yml
+transfer-service/src/main/resources/application.yml
+api-gateway/src/main/resources/application.yml
