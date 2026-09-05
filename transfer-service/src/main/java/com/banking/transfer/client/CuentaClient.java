@@ -2,6 +2,7 @@ package com.banking.transfer.client;
 
 import java.math.BigDecimal;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -13,15 +14,16 @@ public class CuentaClient {
     
     private final RestClient restClient;
 
-    public CuentaClient(RestClient.Builder builder) {
-        this.restClient = builder
-                .baseUrl("http://ACCOUNT-SERVICE")
-                .build();
+    public CuentaClient(
+            @Qualifier("loadBalancedRestClient")
+            RestClient restClient) {
+
+        this.restClient = restClient;
     }
 
     public CuentaResponse obtenerCuenta(Long id){
         return restClient.get()
-            .uri("/api/cuentas/{id}", id)
+            .uri("http://ACCOUNT-SERVICE/api/cuentas/{id}", id)
             .retrieve()
             .body(CuentaResponse.class);
     }
@@ -30,23 +32,19 @@ public class CuentaClient {
         MontoRequest request = new MontoRequest(monto);
         
         return restClient.post()
-                .uri("/api/cuentas/{id}/retiros", id)
+                .uri("http://ACCOUNT-SERVICE/api/cuentas/{id}/retiros", id)
                 .body(request)
                 .retrieve()
                 .body(CuentaResponse.class);
-
     }
 
     public CuentaResponse depositar(Long id, BigDecimal monto){
         MontoRequest request = new MontoRequest(monto);
 
         return restClient.post()
-                .uri("/api/cuentas/{id}/depositos", id)
+                .uri("http://ACCOUNT-SERVICE/api/cuentas/{id}/depositos", id)
                 .body(request)
                 .retrieve()
                 .body(CuentaResponse.class);
     }
-
-
-
 }
