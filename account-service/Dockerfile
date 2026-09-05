@@ -1,4 +1,4 @@
-FROM amazoncorretto:17-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 # Etiquetas para identificación
 LABEL maintainer="banking-platform"
