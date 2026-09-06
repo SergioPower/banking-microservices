@@ -6,6 +6,7 @@ import com.banking.account.entity.TipoCuenta;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 public record CuentaRequest(
@@ -14,10 +15,10 @@ public record CuentaRequest(
     @NotBlank
     String titular,
 
-    @NotBlank
+    @NotNull
     TipoCuenta tipoCuenta,
 
-    @NotBlank
+    @NotNull
     @PositiveOrZero
     BigDecimal saldoInicial
 ) {

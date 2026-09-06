@@ -28,7 +28,6 @@ public class Cuenta {
     private String titular;
 
     @Column(name = "tipo_cuenta", nullable = false)
-    @NotBlank(message = "El tipo de cuenta es obligatorio")
     private TipoCuenta tipoCuenta;
 
     private BigDecimal saldo;

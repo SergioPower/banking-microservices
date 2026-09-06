@@ -11,39 +11,37 @@ import com.banking.transfer.dto.MontoRequest;
 
 @Component
 public class CuentaClient {
-    
+
     private final RestClient restClient;
 
     public CuentaClient(
-            @Qualifier("loadBalancedRestClient")
-            RestClient restClient) {
+            @Qualifier("loadBalancedRestClientBuilder")
+            RestClient.Builder builder) {
 
-        this.restClient = restClient;
+        this.restClient = builder
+                .baseUrl("http://ACCOUNT-SERVICE/api/cuentas")
+                .build();
     }
 
-    public CuentaResponse obtenerCuenta(Long id){
+    public CuentaResponse obtenerCuenta(Long id) {
         return restClient.get()
-            .uri("http://ACCOUNT-SERVICE/api/cuentas/{id}", id)
-            .retrieve()
-            .body(CuentaResponse.class);
-    }
-
-    public CuentaResponse retirar(Long id, BigDecimal monto){
-        MontoRequest request = new MontoRequest(monto);
-        
-        return restClient.post()
-                .uri("http://ACCOUNT-SERVICE/api/cuentas/{id}/retiros", id)
-                .body(request)
+                .uri("/{id}", id)
                 .retrieve()
                 .body(CuentaResponse.class);
     }
 
-    public CuentaResponse depositar(Long id, BigDecimal monto){
-        MontoRequest request = new MontoRequest(monto);
-
+    public CuentaResponse retirar(Long id, BigDecimal monto) {
         return restClient.post()
-                .uri("http://ACCOUNT-SERVICE/api/cuentas/{id}/depositos", id)
-                .body(request)
+                .uri("/{id}/retiros", id)
+                .body(new MontoRequest(monto))
+                .retrieve()
+                .body(CuentaResponse.class);
+    }
+
+    public CuentaResponse depositar(Long id, BigDecimal monto) {
+        return restClient.post()
+                .uri("/{id}/depositos", id)
+                .body(new MontoRequest(monto))
                 .retrieve()
                 .body(CuentaResponse.class);
     }
