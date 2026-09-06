@@ -118,8 +118,8 @@ echo "📊 Health Checks:"
 
 wait_for_service "http://localhost:8761/actuator/health" "Eureka Server"
 wait_for_service "http://localhost:8080/actuator/health" "API Gateway"
-wait_for_service "http://localhost:8081/api/accounts/actuator/health" "Account Service"
-wait_for_service "http://localhost:8082/api/transfers/actuator/health" "Transfer Service"
+wait_for_service "http://localhost:8081/actuator/health" "Account Service"
+wait_for_service "http://localhost:8082/actuator/health" "Transfer Service"
 
 # 5.2 Verificar Eureka Registry
 echo ""
@@ -160,7 +160,7 @@ echo "🚪 Probando API Gateway..."
 
 # Probar Account Service a través del Gateway
 echo -n "   ➡️  Account Service (via Gateway): "
-RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/accounts/actuator/health 2>/dev/null)
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/cuentas/actuator/health 2>/dev/null)
 if [ "$RESPONSE" = "200" ]; then
     echo "✅ OK (HTTP $RESPONSE)"
 else
@@ -169,7 +169,7 @@ fi
 
 # Probar Transfer Service a través del Gateway
 echo -n "   ➡️  Transfer Service (via Gateway): "
-RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/transfers/actuator/health 2>/dev/null)
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/transferencias/actuator/health 2>/dev/null)
 if [ "$RESPONSE" = "200" ]; then
     echo "✅ OK (HTTP $RESPONSE)"
 else
@@ -188,22 +188,5 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "✅ ¡BUILD COMPLETADO EXITOSAMENTE!"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo ""
-echo "📌 URLs de acceso:"
-echo "   🌐 Eureka Dashboard:    http://localhost:8761"
-echo "   🚪 API Gateway:          http://localhost:8080"
-echo "   💳 Account Service:      http://localhost:8081/api/accounts"
-echo "   💸 Transfer Service:     http://localhost:8082/api/transfers"
-echo ""
-echo "📋 Comandos útiles:"
-echo "   📊 Ver logs:            docker-compose logs -f"
-echo "   🔍 Ver estado:          docker-compose ps"
-echo "   🛑 Detener servicios:   docker-compose down"
-echo "   🗑️  Eliminar todo:       docker-compose down -v"
-echo ""
-echo "🧪 Pruebas rápidas:"
-echo "   curl http://localhost:8761/eureka/apps  # Ver servicios"
-echo "   curl http://localhost:8080/api/accounts/actuator/health  # Account via Gateway"
-echo "   curl http://localhost:8080/api/transfers/actuator/health  # Transfer via Gateway"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
