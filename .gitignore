@@ -10,3 +10,4 @@ account-service/src/main/resources/application.yml
 eureka-server/src/main/resources/application.properties
 transfer-service/src/main/resources/application.yml
 api-gateway/src/main/resources/application.yml
+**/target/
