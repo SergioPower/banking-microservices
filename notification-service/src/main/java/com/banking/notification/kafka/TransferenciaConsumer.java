@@ -1,26 +1,29 @@
 package com.banking.notification.kafka;
 
+import java.util.function.Consumer;
+
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.banking.notification.event.TransferenciaCompletadaEvent;
 
 @Component
 public class TransferenciaConsumer {
 
+    private static final Logger log = LoggerFactory.getLogger(TransferenciaConsumer.class);
+
     @KafkaListener(
-            topics = "transferencia-completada",
-            groupId = "notification-service"
+        topics = "transferencia-completada",
+        groupId = "notification-service"
     )
     public void consumir(TransferenciaCompletadaEvent evento) {
-
-        System.out.println("=================================");
-        System.out.println("Transferencia recibida");
-        System.out.println("ID: " + evento.transferenciaId());
-        System.out.println("Origen: " + evento.cuentaOrigenId());
-        System.out.println("Destino: " + evento.cuentaDestinoId());
-        System.out.println("Monto: $" + evento.monto());
-        System.out.println("Estado: " + evento.estado());
-        System.out.println("=================================");
+        log.info("Transferencia recibida: id={}, origen={}, destino={}, monto={}, estado={}",
+            evento.transferenciaId(),
+            evento.cuentaOrigenId(),
+            evento.cuentaDestinoId(),
+            evento.monto(),
+            evento.estado());
     }
 }
