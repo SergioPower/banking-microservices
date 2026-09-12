@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: NOTIFICATION-SERVICE
+
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: notification-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: com.banking.notification.event.TransferenciaCompletadaEvent
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
+  instance:
+    prefer-ip-address: true
+    hostname: notification-service
+    instance-id: ${spring.application.name}:${random.value}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
