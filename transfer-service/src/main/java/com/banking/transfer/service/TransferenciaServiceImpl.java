@@ -11,9 +11,11 @@ import com.banking.transfer.dto.TransferenciaRequest;
 import com.banking.transfer.dto.TransferenciaResponse;
 import com.banking.transfer.entity.EstadoTransferencia;
 import com.banking.transfer.entity.Transferencia;
+import com.banking.transfer.event.TransferenciaCompletadaEvent;
 import com.banking.transfer.exception.CuentaOrigenDesnitoIgualException;
 import com.banking.transfer.exception.TransferenciaFallidaException;
 import com.banking.transfer.exception.TransferenciaNotFoundException;
+import com.banking.transfer.kafka.TransferenciaProducer;
 import com.banking.transfer.repository.TransferenciaRepository;
 
 @Service
@@ -23,9 +25,12 @@ public class TransferenciaServiceImpl implements TransferenciaService {
 
     private final CuentaClient cuentaClient;
 
-    public TransferenciaServiceImpl(TransferenciaRepository repository, CuentaClient cuentaClient) {
+    private final TransferenciaProducer transferenciaProducer;
+
+    public TransferenciaServiceImpl(TransferenciaRepository repository, CuentaClient cuentaClient, TransferenciaProducer transferenciaProducer) {
         this.repository = repository;
         this.cuentaClient = cuentaClient;
+        this.transferenciaProducer = transferenciaProducer;
     }
 
     @Override
@@ -76,6 +81,16 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         transferencia.setMonto(monto);
         transferencia.setEstado(estado);
         repository.save(transferencia);
+
+        transferenciaProducer.publicar(
+            new TransferenciaCompletadaEvent(
+                transferencia.getId(), 
+                transferencia.getCuentaOrigenId(), 
+                transferencia.getCuentaDestinoId(), 
+                transferencia.getMonto(),
+                transferencia.getEstado().name()
+            )
+        );
 
         return toResponse(transferencia);
     }
