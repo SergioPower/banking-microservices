@@ -1,5 +1,22 @@
 services:
 
+  # ============================================
+  # Kafka Broker
+  # ============================================
+  notification-service:
+    build: 
+      context: ./notification-service
+      dockerfile: Dockerfile
+      args:
+        BUILDKIT_INLINE_CACHE: 1
+    container_name: notification-service
+    depends_on:
+      - kafka
+    environment:
+      SPRING_APPLICATION_NAME: NOTIFICATION-SERVICE
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    networks:
+      - banking-network
 
 
   # ============================================

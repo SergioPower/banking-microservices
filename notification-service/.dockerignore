@@ -1,0 +1,41 @@
+# Archivos de build
+target/
+*.jar
+*.war
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.settings/
+.project
+.classpath
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentación
+*.md
+README.md
+LICENSE
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Variables de entorno
+.env
+.env.*
